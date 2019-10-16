@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+</head>
+
+<body>
+
+	<script src='./engine/Loader.js'></script>
+
+	<script>
+
+		//Деструктурирующее присваивание
+		const { Loader } = GameEngine //Эквивалентно const loader = GameEngine.loader
+
+		const loader = new Loader;
+
+		loader.addImage('cat', 'static/cat.jpg')
+		loader.addImage('cat2', 'static/cat2.jpg')
+		loader.addJson('persons', 'static/persons.json')
+		loader.addJson('animals', 'static/animals.json')
+
+		loader.load(() => {
+			const { jsons, images } = loader.resources
+			for (image in images) {
+				document.body.append(images[image])
+			}
+			console.log(jsons)
+		})
+
+	</script>
+</body>
+
+</html>

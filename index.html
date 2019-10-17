@@ -9,27 +9,90 @@
 </head>
 
 <body>
-
+	<script src='./engine/Container.js'></script>
 	<script src='./engine/Loader.js'></script>
+	<script src='./engine/Renderer.js'></script>
+	<script src='./engine/Sprite.js'></script>
+
 
 	<script>
 
 		//Деструктурирующее присваивание
-		const { Loader } = GameEngine //Эквивалентно const loader = GameEngine.loader
+		const { Loader, Renderer, Sprite } = GameEngine //Эквивалентно const loader = GameEngine.loader
 
-		const loader = new Loader;
+		let sprite = null
+		const loader = new Loader
+		const renderer = new Renderer({
+			width: 500,
+			height: 500,
+			background: 'gray',
+			update(timestamp) {
+				if (!sprite) {
+					return
+				}
+				// Анимация движения
+				sprite.x = renderer.canvas.width / 2 + 50 * Math.cos(timestamp / 100)
+				sprite.y = renderer.canvas.height / 2 + 50 * Math.sin(timestamp / 100)
 
+				sprite2.x = renderer.canvas.width / 3 * Math.sin(timestamp / 200)
+				sprite2.y = renderer.canvas.height / 3 * Math.cos(timestamp / 200)
+			}
+		});
+
+		// Добавляем на страницу виртуальный элемент canvas
+		document.body.append(renderer.canvas)
+
+		// 1) Загружаем в очередь. Регистрируем данные, которые нам нужно будет загрузить.
 		loader.addImage('cat', 'static/cat.jpg')
 		loader.addImage('cat2', 'static/cat2.jpg')
-		loader.addJson('persons', 'static/persons.json')
-		loader.addJson('animals', 'static/animals.json')
 
+
+		loader.addJson('persons', 'static/persons.json')
+
+
+
+
+		// Загружаем все асинхронно
 		loader.load(() => {
-			const { jsons, images } = loader.resources
-			for (image in images) {
-				document.body.append(images[image])
-			}
-			console.log(jsons)
+			// // Манипулируем  загруженными данными
+			// document.body.append(loader.getImage('cat'))
+
+			// const json = loader.getJson('persons')
+			// console.log(json)
+			loader.load(() => {
+				sprite = new Sprite(loader.getImage('cat'), {
+					scale: 0.5,
+					anchorX: -0.5,
+					anchorY: -0.5
+				})
+
+				sprite.absoluteX = 0
+				sprite.absoluteY = 0
+				renderer.stage.add(sprite)
+
+				sprite2 = new Sprite(loader.getImage('cat2'), {
+					scale: 0.1,
+					anchorX: 0,
+					anchorY: 0
+				})
+
+				sprite2.absoluteX = 0
+				sprite2.absoluteY = 300
+				renderer.stage.add(sprite2)
+
+
+				// sprite.width = 450
+				// sprite.height = 450
+
+				// sprite.frame.x = 100
+				// sprite.frame.y = 100
+				// sprite.frame.width = 300
+				// sprite.frame.height = 300
+
+
+
+			})
+
 		})
 
 	</script>
